@@ -1,0 +1,32 @@
+{
+  "session": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\hitl_sessions\\sess_20261028_163359",
+  "workdir": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\hitl_sessions\\sess_20261028_163359\\_workdir",
+  "from_run": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\runs\\run_20261025_222536",
+  "run_id": "run_20261025_222536",
+  "scenario": {
+    "name": "默认情景（与 data/forecast·actual 年序列对齐）",
+    "start": "06/15",
+    "terminal": "10/04",
+    "duration_days": 112,
+    "raw": 16.0,
+    "taw": 80.0,
+    "default_perc_mm_d": 1.5,
+    "variety": "高邮水稻",
+    "forecast_rel": "data/forecast.csv",
+    "actual_rel": "data/actual.csv",
+    "growth_para_rel": "data/growth_para.csv",
+    "forecast_eval_rel": "data/forecast_policy.csv",
+    "actual_eval_rel": "data/actual_policy.csv"
+  },
+  "copied": [
+    "forecast_eval",
+    "actual_eval",
+    "growth_para",
+    "uploads",
+    "01_train",
+    "02_eval",
+    "uploads_snapshot:forecast.csv,actual.csv,forecast_eval.csv,actual_eval.csv,growth_para.csv",
+    "workdir_model"
+  ],
+  "missing": []
+}

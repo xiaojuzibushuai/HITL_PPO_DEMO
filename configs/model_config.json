@@ -1,0 +1,30 @@
+{
+  "model": "PPO_Rice_Env",
+  "policy_mode": "masked",
+  "n_states": 8,
+  "n_actions": 21,
+  "action_space_mm": [
+    -100, -90, -80, -70, -60, -50, -40, -30, -20, -10,
+    0,
+    10, 20, 30, 40, 50, 60, 70, 80, 90, 100
+  ],
+  "state_columns": [
+    "h_before", "hmin", "hmax", "Hp", "Hc", "lamda", "ks", "P_cumu7"
+  ],
+  "hidden_dim": 512,
+  "soil_note": "运行时 RAW/TAW 以 configs/scenario.json 为准；此处仅备份对照",
+  "decision_defaults": {
+    "hc_guard": true,
+    "physical_clip": true,
+    "low_water_refill": true,
+    "drying_rule": false
+  },
+  "evaluation_defaults": {
+    "hc_guard": true,
+    "physical_clip": true,
+    "low_water_refill": false,
+    "drying_rule": false,
+    "initial_water": "hmax"
+  },
+  "note": "训练与推理必须同用 policy_mode；masked 时采样/argmax 前屏蔽非法动作。"
+}

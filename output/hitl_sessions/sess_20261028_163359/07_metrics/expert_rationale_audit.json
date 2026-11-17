@@ -1,0 +1,88 @@
+{
+  "ok": true,
+  "session": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\hitl_sessions\\sess_20261028_163359",
+  "reason_code_counts": {
+    "merge_small_irrigation": 0,
+    "wait_forecast_rain": 3,
+    "allow_low_water": 0,
+    "other": 0
+  },
+  "labels": {
+    "merge_small_irrigation": "合并小额灌水",
+    "wait_forecast_rain": "依据预报暂缓灌水",
+    "allow_low_water": "允许较低水层",
+    "other": "其他"
+  },
+  "wait_forecast_rain": {
+    "n_labeled_days": 2,
+    "n_wait_events_merged": 1,
+    "n_days_ppo_irrigation_reduced": 2,
+    "total_irrigation_reduced_mm": 100.0,
+    "mean_P_cumu7": 82.3,
+    "mean_actual_rain_7d": 233.35,
+    "p_cumu7_window": {
+      "includes_decision_day": true,
+      "n_days": 7,
+      "actual_cols": [
+        "P_1_a",
+        "P_2_a",
+        "P_3_a",
+        "P_4_a",
+        "P_5_a",
+        "P_6_a",
+        "P_7_a"
+      ],
+      "note": "P_1_a=决策日实测雨；P_2_a…P_7_a=随后 6 日。核对预报兑现时用同行这 7 列之和。"
+    },
+    "report_separately": [
+      "专家是否减少了 PPO 灌水（天数、水量）",
+      "预报雨是否兑现（P_cumu7 vs 时窗实测合计，含决策日）",
+      "等待期间胁迫与模拟产量响应（见 allow_low / 全季 metrics，不在此合成成功率）"
+    ],
+    "days": [
+      {
+        "date": "2012-06-28 00:00:00",
+        "year": "2012",
+        "stage": "Tillering",
+        "h_before": 5.5081669476,
+        "hmin": 20.0,
+        "P_cumu7": 67.35,
+        "a_model": 50.0,
+        "a_expert": 0.0,
+        "irrigation_reduced": true,
+        "delta_irrigation_mm": -50.0,
+        "actual_rain_7d": 234.5,
+        "forecast_minus_actual_7d": -167.15,
+        "rain_realized_mm": 234.5
+      },
+      {
+        "date": "2012-06-29 00:00:00",
+        "year": "2012",
+        "stage": "Tillering",
+        "h_before": 3.3920003099000002,
+        "hmin": 20.0,
+        "P_cumu7": 97.25,
+        "a_model": 50.0,
+        "a_expert": 0.0,
+        "irrigation_reduced": true,
+        "delta_irrigation_mm": -50.0,
+        "actual_rain_7d": 232.2,
+        "forecast_minus_actual_7d": -134.95,
+        "rain_realized_mm": 232.2
+      }
+    ]
+  },
+  "allow_low_water": {
+    "n_labeled_days": 0,
+    "mean_below_hmin_mm": null,
+    "note": "低于 hmin 是管理水层指标，不自动等于作物受旱；胁迫看 ks/Ks 等模拟响应；相对产量见三方 yearly yield_factor，勿写成田间实测产量",
+    "days": []
+  },
+  "merge_small_irrigation_labeled_days": 0,
+  "method_notes": [
+    "等雨与允许偏干分开统计，不合成成功率",
+    "等雨仅统计 reason_code=wait_forecast_rain 的显式标注日",
+    "等待事件：相邻标注日合并，同时报告决策日数与事件数",
+    "P_cumu7 时窗含决策日，与 actual.P_1_a…P_7_a 对齐"
+  ]
+}

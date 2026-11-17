@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HITL · 水稻灌排 · 人在回路微调</title>
+  <link rel="stylesheet" href="/static/style.css?v={{ asset_v }}" />
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <div class="brand">
+      <span class="logo">HITL</span>
+      <div>
+        <h1>水稻灌排 · 人在回路微调</h1>
+        <p id="flowHint">训练会话 →（新建才上传/校验）→ 训评结果 → 人工审阅（改动作→一致性重算）→ 行为克隆(BC) → 三方对比</p>
+      </div>
+    </div>
+    <div class="session-bar">
+      <div class="path-meta">
+        <span>训练会话 <code id="runLabel">{{ run.run_id or "未选择" }}</code></span>
+        <span>微调会话 <code id="sessLabel">{{ session.session_id or "未选择" }}</code></span>
+      </div>
+      <span class="mode-pill" id="modePill">未选会话</span>
+    </div>
+  </header>
+
+  <nav class="stepper" id="stepper" aria-label="流程步骤">
+    <button type="button" class="step on" data-step="0" data-target="card-entry"><i>0</i><span>选训练会话</span></button>
+    <button type="button" class="step" data-step="1" data-target="card-upload" data-new-only="1"><i>1</i><span>上传数据集</span></button>
+    <button type="button" class="step" data-step="2" data-target="card-upload" data-new-only="1"><i>2</i><span>数据集校验</span></button>
+    <button type="button" class="step" data-step="3" data-target="card-train"><i>3</i><span>训评结果</span></button>
+    <button type="button" class="step" data-step="4" data-target="card-expert"><i>4</i><span>人工审阅</span></button>
+    <button type="button" class="step" data-step="5" data-target="card-bc"><i>5</i><span>行为克隆</span></button>
+    <button type="button" class="step" data-step="6" data-target="card-eval"><i>6</i><span>三方对比</span></button>
+  </nav>
+
+  <p class="board-msg" id="msg"></p>
+
+  <!-- ⓪ 互斥：新建 OR 加载 -->
+  <section class="card section-wide" id="card-entry">
+    <h2><span class="num">⓪</span> 选择训练会话</h2>
+    <p class="hint">A / B <b>二选一</b>。绑定 <code>output/runs/run_*</code> 后，下方区块按路径自动显示或隐藏。</p>
+
+    <div class="mode-tabs" id="entryTabs" role="tablist">
+      <button type="button" class="mode-tab on" data-entry="new" id="tabEntryNew" role="tab" aria-selected="true">
+        A · 新建训练会话
+        <span class="tab-desc">空白会话 → 上传 → 校验 → 训练 / 上传 .pth</span>
+      </button>
+      <button type="button" class="mode-tab" data-entry="load" id="tabEntryLoad" role="tab" aria-selected="false">
+        B · 加载历史训练会话
+        <span class="tab-desc">回放 01_train / 02_eval · 本路径不显示上传与校验</span>
+      </button>
+    </div>
+
+    <div class="choice-pane" id="entryPaneNew" data-entry-pane="new">
+      <h3>新建空白训练会话</h3>
+      <p class="hint">创建后进入上传与校验；不会加载历史摘要。会话目录名由系统按时间戳自动生成。</p>
+      <div class="card-foot tight">
+        <button type="button" class="btn primary" id="btnNewRun">新建训练会话</button>
+      </div>
+    </div>
+
+    <div class="choice-pane section-hidden" id="entryPaneLoad" data-entry-pane="load">
+      <h3>加载历史训练会话</h3>
+      <p class="hint">加载后隐藏上传/校验，直接展示训评曲线与评估集 KPI。</p>
+      <label class="field">历史训练会话
+        <select id="runSelectHist">
+          <option value="">— 选择历史训练会话 —</option>
+          {% for r in runs %}
+          <option value="{{ r.run_id }}" {% if r.run_id == run.run_id %}selected{% endif %}>
+            {{ r.run_id }}{% if r.has_best %} ·已训{% endif %}{% if r.has_eval %} ·已评{% endif %}
+          </option>
+          {% endfor %}
+        </select>
+      </label>
+      <div class="card-foot tight">
+        <button type="button" class="btn primary" id="btnLoadRun">加载训练会话</button>
+      </div>
+    </div>
+
+    <div class="folder-box section-hidden" id="runFolderBox">
+      <h4>当前训练会话 · 文件夹摘要</h4>
+      <div id="runFolderBody"><p class="hint">尚未绑定训练会话。</p></div>
+      <div class="card-foot tight" style="border:0;padding-top:0.4rem;margin-top:0.4rem">
+        <a class="btn primary" id="btnZipRun" href="/api/run/download_zip">一键打包下载 zip</a>
+        <button type="button" class="btn ghost" id="btnResetEntry">更换训练会话（重选 A / B）</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="stack section-hidden" id="sec-pipeline">
+    <section class="card section-hidden" id="card-upload" data-role="new-train">
+      <h2><span class="num">①②</span> 上传数据集 · 校验 <span class="tag-soft">仅新建路径</span></h2>
+      <p class="hint">
+        <b>训练路径</b>：上传训/评表（或点「使用默认情景表」）→ <b>校验通过</b> → 训练。<br />
+        <b>直推路径</b>：放入已训 <code>.pth</code> + 评估集 → 校验通过 → 仅整季推理。<br />
+        新建会话默认 <b>不</b>自动拷贝情景表；「开始运行」在校验通过前保持禁用。
+        校验读磁盘 <code>uploads/</code>，不是浏览器「选择文件」框。
+      </p>
+      <p class="hint" id="uploadSourceBanner"></p>
+      <div class="field-row">
+        <label class="field">模型名前缀 <input type="text" id="modelName" value="ppo_rice" /></label>
+      </div>
+      <div class="upload-grid">
+        <label class="upload-slot"><span>训练预报 forecast.csv</span><input type="file" id="upForecast" accept=".csv" /></label>
+        <label class="upload-slot"><span>训练实测 actual.csv</span><input type="file" id="upActual" accept=".csv" /></label>
+        <label class="upload-slot"><span>评估预报 forecast_eval.csv</span><input type="file" id="upForecastEval" accept=".csv" /></label>
+        <label class="upload-slot"><span>评估实测 actual_eval.csv</span><input type="file" id="upActualEval" accept=".csv" /></label>
+        <label class="upload-slot"><span>生育期 growth_para.csv</span><input type="file" id="upGrowth" accept=".csv" /></label>
+        <label class="upload-slot accent"><span>已训模型（可选）*.pth</span><input type="file" id="upModel" accept=".pth,.pt" /></label>
+      </div>
+      <p class="hint" style="margin:0.35rem 0 0.15rem">磁盘 <code>uploads/</code> 已有（≠浏览器是否选中文件）：</p>
+      <div class="file-chips" id="uploadChips">
+        {% for f in run.uploads %}<code>{{ f }}</code>{% endfor %}
+      </div>
+      <p class="hint" id="modelChip">{% if run.has_best %}已有权重：best.pth{% else %}尚未放入已训模型。{% endif %}</p>
+      <div class="card-foot">
+        <button type="button" class="btn primary" id="btnUpload">保存上传文件</button>
+        <button type="button" class="btn" id="btnUseScenario" title="把 configs 默认情景训/评表拷入本 run uploads/">使用默认情景表</button>
+        <button type="button" class="btn" id="btnValidate">② 数据集校验</button>
+      </div>
+      <div id="validateBox" class="validate-box {% if run.data_ok %}ok{% elif run.data_validate %}bad{% endif %}">
+        {% if run.data_validate %}
+          {% if run.data_ok %}
+          <p class="ok-line">校验通过（{{ run.data_validate.source }}）· {{ run.data_validate.start }}～{{ run.data_validate.terminal }}</p>
+          {% else %}
+          <p class="bad-line">校验未通过</p>
+          <ul>{% for e in run.data_validate.errors %}<li>{{ e }}</li>{% endfor %}</ul>
+          {% endif %}
+        {% else %}
+        <p class="hint" style="margin:0">尚未校验。请先准备 uploads 表，再点「② 数据集校验」；通过后「开始运行」才会亮起。</p>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="card section-hidden" id="card-train">
+      <h2><span class="num">③</span> 训练 / 整季推理 · 结果回放</h2>
+      <p class="hint" id="trainHint">加载历史训练会话时直接回放；新建会话须先完成校验。</p>
+
+      <div id="trainControls" class="train-controls">
+        <div class="field-row">
+          <label class="field">模式
+            <select id="trainMode">
+              <option value="auto">自动（无 best 则训练，有则只评估）</option>
+              <option value="train">强制重新训练 + 评估</option>
+              <option value="eval_only">仅整季推理（须已有 best / 已上传 .pth）</option>
+            </select>
+          </label>
+          <label class="field">训练局数 <input type="number" id="trainEpisodes" value="1500" min="10" max="5000" /></label>
+          <label class="field">评估年数上限 <input type="number" id="maxYearsTrain" min="1" placeholder="空=全部" /></label>
+        </div>
+        <div class="card-foot">
+          <button type="button" class="btn primary" id="btnStartTrain" disabled>开始运行</button>
+          <button type="button" class="btn" id="btnGotoExpert" disabled>进入人工审阅 →</button>
+          <span class="gate-hint" id="trainGateHint">请先选择训练会话</span>
+        </div>
+      </div>
+
+      <div class="monitor" id="monitorBox">
+        <div class="monitor-head">
+          <div>
+            <h3 class="monitor-title">训练过程</h3>
+            <p class="hint monitor-sub">实时指标与学习曲线；平滑仅作用于<strong>回报图展示</strong>（滑动平均），不改训练。</p>
+          </div>
+          <p class="monitor-status" id="trainStatusLine">未开始</p>
+        </div>
+
+        <div class="metric-row five train-metrics" id="trainMetrics">
+          <div><b id="tmEp">—</b><span>当前局</span></div>
+          <div><b id="tmRet">—</b><span>本局回报</span></div>
+          <div><b id="tmMean">—</b><span>近窗均值</span></div>
+          <div><b id="tmBest">—</b><span>历史 best</span></div>
+          <div class="metric-status"><b id="tmStatus">待机</b><span>状态</span></div>
+        </div>
+
+        <div class="viz-stack">
+          <div class="viz-panel viz-panel-process">
+            <div class="viz-caption-row">
+              <p class="viz-caption">回报 · Episode</p>
+              <div class="smooth-ctrl" title="仅影响本图绿线；灰色为原始回报">
+                <span class="smooth-label">展示平滑</span>
+                <div class="smooth-seg" role="group" aria-label="回报曲线平滑窗（局）">
+                  <button type="button" class="smooth-opt" data-w="0">关</button>
+                  <button type="button" class="smooth-opt" data-w="50">50</button>
+                  <button type="button" class="smooth-opt on" data-w="100">100</button>
+                  <button type="button" class="smooth-opt" data-w="200">200</button>
+                  <button type="button" class="smooth-opt" data-w="500">500</button>
+                </div>
+                <span class="smooth-unit">局</span>
+                <select id="smoothWindow" class="sr-only" aria-hidden="true" tabindex="-1">
+                  <option value="0">无</option>
+                  <option value="50">50</option>
+                  <option value="100" selected>100</option>
+                  <option value="200">200</option>
+                  <option value="500">500</option>
+                </select>
+              </div>
+            </div>
+            <div class="chart-box chart-box-process"><canvas id="trainChart"></canvas></div>
+          </div>
+          <div class="viz-panel viz-panel-process">
+            <p class="viz-caption">非零动作数 · Episode</p>
+            <div class="chart-box chart-box-process"><canvas id="actionChart"></canvas></div>
+          </div>
+          <div class="viz-panel viz-panel-process">
+            <p class="viz-caption">价值损失 value · Episode</p>
+            <div class="chart-box chart-box-process"><canvas id="lossValueChart"></canvas></div>
+          </div>
+          <div class="viz-panel viz-panel-process">
+            <p class="viz-caption">策略 / 熵损失 · Episode</p>
+            <p class="hint" style="margin:0 0 0.35rem">与 value 分图：量级约 ±0.05，同轴会被压扁。entropy 为 coef×(−H)，通常略负。</p>
+            <div class="chart-box chart-box-process"><canvas id="lossPolicyChart"></canvas></div>
+          </div>
+        </div>
+        <p class="hint conv-line" id="convHint">收敛摘要将显示在此。</p>
+      </div>
+
+      <div class="summary-box" id="summaryBox">
+        <div class="eval-head">
+          <h3 style="margin:0">评估集对比 · PPO vs 固定规则（基线）</h3>
+          <p class="hint" style="margin:0.25rem 0 0">
+            Δ% = PPO 相对<strong>固定规则基线</strong>（+ 更好）。
+            多年均值 ← <code>compare_summary.json</code>；分年柱 ← <code>yearly_metrics_*.csv</code>；
+            单年整季 ← <code>policy_output_*.csv</code>（审阅完成前隐藏，避免专家接触事后实测雨）。
+          </p>
+          <div class="eval-ctrl-row" aria-label="评估视图控制">
+            <label class="eval-ctrl">
+              <span>评估视图</span>
+              <select id="evalYearFilter" title="多年均值 KPI + 下方分年柱图；或选年看该年 KPI + PPO 整季轨迹">
+                <option value="">多年均值（默认）</option>
+              </select>
+            </label>
+            <span class="hint eval-view-hint" id="evalViewHint">多年均值 KPI + 分年柱图（按指标顺序展开）</span>
+          </div>
+        </div>
+        <div id="summaryBody"><p class="hint">训评完成后显示；加载历史训练会话后可回放。</p></div>
+        <div id="yearlyChartWrap" class="yearly-grid">
+          <p class="hint yearly-stack-hint">分年柱图 · 一行两张（yearly_metrics_*.csv）</p>
+          <div class="viz-panel viz-panel-bar yearly-panel">
+            <p class="viz-caption">① 雨利用率（%）</p>
+            <div class="chart-box chart-box-bar-sm"><canvas id="yearlyChart_rain_utilization"></canvas></div>
+          </div>
+          <div class="viz-panel viz-panel-bar yearly-panel">
+            <p class="viz-caption">② 灌总量（mm）</p>
+            <div class="chart-box chart-box-bar-sm"><canvas id="yearlyChart_irrigation_total"></canvas></div>
+          </div>
+          <div class="viz-panel viz-panel-bar yearly-panel">
+            <p class="viz-caption">③ 排总量（mm）</p>
+            <div class="chart-box chart-box-bar-sm"><canvas id="yearlyChart_drainage_total"></canvas></div>
+          </div>
+          <div class="viz-panel viz-panel-bar yearly-panel">
+            <p class="viz-caption">④ 管理水量（mm）</p>
+            <div class="chart-box chart-box-bar-sm"><canvas id="yearlyChart_managed_water"></canvas></div>
+          </div>
+          <div class="viz-panel viz-panel-bar yearly-panel">
+            <p class="viz-caption">⑤ 产量水分系数</p>
+            <div class="chart-box chart-box-bar-sm"><canvas id="yearlyChart_yield_factor"></canvas></div>
+          </div>
+        </div>
+        <div class="section-hidden" id="seasonChartWrap">
+          <div class="viz-panel viz-panel-wide">
+            <p class="viz-caption" id="seasonCaption">整季水层 · 左轴（h/适水带/Hp）· 右轴 Hc</p>
+            <div class="chart-box chart-box-season"><canvas id="seasonChart"></canvas></div>
+          </div>
+          <div class="viz-panel viz-panel-wide">
+            <p class="viz-caption">整季灌排量 · 灌(绿正) / 排(红负) mm</p>
+            <div class="chart-box chart-box-aux"><canvas id="seasonActionChart"></canvas></div>
+          </div>
+          <div class="viz-panel viz-panel-wide">
+            <p class="viz-caption">整季实测日降雨 · P_1_a (mm)（仅审阅结束后显示）</p>
+            <div class="chart-box chart-box-aux"><canvas id="seasonRainChart"></canvas></div>
+          </div>
+        </div>
+        <p class="dl-row" id="runDlRow">
+          <a href="/api/run/download/ppo_rice_best.pth">best.pth</a> ·
+          <a href="/api/run/download/training_log.csv">training_log.csv</a> ·
+          <a href="/api/run/download/training_loss.csv">training_loss.csv</a> ·
+          <a href="/api/run/download/compare_summary.json">compare_summary.json</a> ·
+          <a href="/api/run/download/yearly_metrics_PPO.csv">yearly_PPO.csv</a> ·
+          <a href="/api/run/download/training_curve.png">曲线图</a> ·
+          <a href="/api/run/download_zip">打包下载会话 zip</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- ④ 人工审阅：改动作 → 一致性重算（嵌套闭环）→ 再继续改 -->
+    <section class="card section-wide section-hidden" id="card-expert">
+      <div class="card-head-row">
+        <div>
+          <h2><span class="num">④</span> 人工审阅 · 微调会话</h2>
+          <p class="hint" style="margin-bottom:0">
+            先选微调会话方式（二选一）。进入表后：<b>改动作 → 保存并一致性重算 → 再改 / 再确认</b>，形成闭环；
+            审阅稳定后再做行为克隆。人工审阅年
+            <code id="reviewYearsLabel">2012,2013,2014,2016</code>；留出验证年
+            <code id="holdoutYearsLabel">2017–2020</code>。
+          </p>
+        </div>
+        <div class="metric-row compact section-hidden" id="expertMetrics">
+          <div><b id="mDays">0</b><span>审阅天</span></div>
+          <div><b id="mPrefer">0</b><span>分歧</span></div>
+          <div><b id="mConf">0</b><span>已确认</span></div>
+          <div><b id="mEdit">0</b><span>改动</span></div>
+        </div>
+      </div>
+
+      <div id="expertGateBlock">
+        <div class="mode-tabs" id="expertTabs" role="tablist">
+          <button type="button" class="mode-tab on" data-expert="load" id="tabExpertLoad" role="tab" aria-selected="true">
+            ① 加载历史微调会话
+            <span class="tab-desc">回放 hitl_sessions · 人工审阅表 / BC / 三方</span>
+          </button>
+          <button type="button" class="mode-tab" data-expert="new" id="tabExpertNew" role="tab" aria-selected="false">
+            ② 基于训练会话新建人工审阅
+            <span class="tab-desc">从含 best 的训练会话生成审阅表（新建微调会话）</span>
+          </button>
+        </div>
+
+        <div class="choice-pane" id="expertPaneLoad" data-expert-pane="load">
+          <h3>加载历史微调会话</h3>
+          <label class="field">历史微调会话
+            <select id="sessionSelect">
+              <option value="">— 选择历史微调会话 —</option>
+              {% for s in sessions %}
+              <option value="{{ s.session_id }}" {% if s.session_id == session.session_id %}selected{% endif %}>
+                {{ s.session_id }}{% if s.run_id %} · {{ s.run_id }}{% endif %}
+              </option>
+              {% endfor %}
+            </select>
+          </label>
+          <div class="card-foot tight">
+            <button type="button" class="btn primary" id="btnLoadSession">加载微调会话</button>
+          </div>
+        </div>
+
+        <div class="choice-pane section-hidden" id="expertPaneNew" data-expert-pane="new">
+          <h3>新建人工审阅表</h3>
+          <label class="field">训练会话（须含 best）
+            <select id="expertRunSelect">
+              <option value="">— 请选择含 best 的训练会话 —</option>
+              {% for r in runs %}
+                {% if r.has_best %}
+                <option value="{{ r.run_id }}" {% if r.run_id == run.run_id %}selected{% endif %}>{{ r.run_id }}{% if r.has_eval %} ·已评估{% endif %}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+          </label>
+          <label class="field">年数上限（调试用）
+            <input type="number" id="maxYearsExpert" min="1" placeholder="留空 = 全部审阅年" />
+          </label>
+          <p class="hint">正式流程请<strong>留空</strong>，生成全部审阅年（如 2012/2013/2014/2016）供下拉切换；填 <code>1</code> 会只出一年（仅调试）。</p>
+          <div class="card-foot tight">
+            <button type="button" class="btn primary" id="btnStartExpert">生成人工审阅表（新建微调会话）</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="folder-box soft section-hidden" id="sessFolderInline">
+        <h4>当前微调会话 · 文件夹摘要</h4>
+        <div id="sessFolderInlineBody"><p class="hint">加载或新建后显示。</p></div>
+        <div class="card-foot tight" style="border:0;padding-top:0.4rem;margin-top:0.4rem">
+          <a class="btn primary" id="btnZipSess" href="/api/session/download_zip">一键打包下载 zip</a>
+          <button type="button" class="btn ghost" id="btnResetExpert">更换微调方式（重选 ① / ②）</button>
+        </div>
+      </div>
+
+      <div id="reviewPane" class="section-hidden">
+        <div class="review-loop">
+          <h3>人工审阅工作台</h3>
+          <p class="hint" id="resyncHint">
+            ① 选审阅年 → ② 只改需要改的「专家」动作 → 自动重算水深 →
+            ③ 上游改动后的「需重看」须显式处理（可一键认可当前建议）→
+            ④ <b>本审阅年定稿</b>才把其余未改日批量标为认可并纳入 BC → ⑤ 换年 → ⑥ BC。
+            「心里认可但没点定稿」系统仍算未确认。
+          </p>
+          <p class="gate-hint section-hidden" id="dirtyBanner">正在写入一致性重算…请稍候再换年或定稿。</p>
+
+          <div class="review-controls">
+            <label class="field year-filter-field">
+              <span class="field-label">人工审阅年</span>
+              <select id="yearFilter" aria-label="选择审阅年"></select>
+            </label>
+            <label class="check prefer-check" title="分歧 = PPO 执行量 ≠ 固定规则动作（非专家改动）">
+              <input type="checkbox" id="onlyPrefer" /> 表格仅「与规则分歧」日
+            </label>
+            <label class="check prefer-check" title="晒田/落干/收获排水为固定规则（自动锁定，无需改）；取消勾选可只看可编辑日">
+              <input type="checkbox" id="showFixedDays" checked /> 显示固定规则日（晒田/落干）
+            </label>
+          </div>
+          <p class="hint" id="yearGapHint"></p>
+          <p class="hint">
+            默认展示<strong>全部日</strong>（含晒田/落干，锁定不可改，无需复核）；三图画整季。
+            勾选「仅分歧」只看执行≠经验规则；取消「显示固定规则日」可只看可编辑行。
+            <b>模型提案</b>=策略原始动作；
+            <b>模型执行</b>=实灌/排；
+            <b>经验规则</b>=对照；
+            <b>专家</b>=BC 标签。
+            标记：与规则分歧 / 连续小额 / 晒田·落干 / Hc守卫 / 需重看。
+          </p>
+
+          <div class="viz-panel viz-panel-wide">
+            <p class="viz-caption">整季水层（随 <code>current</code> 审阅表动态更新，非 original）· 左轴 h/适水带/Hp · 右轴 Hc · 分歧日加点</p>
+            <div class="chart-box chart-box-season"><canvas id="waterChart"></canvas></div>
+          </div>
+          <div class="viz-panel viz-panel-wide">
+            <p class="viz-caption">整季灌排量（跟 current 重算）· 灌(绿正) / 排(红负) mm</p>
+            <div class="chart-box chart-box-aux"><canvas id="waterActionChart"></canvas></div>
+          </div>
+          <div class="viz-panel viz-panel-wide">
+            <p class="viz-caption" id="waterRainCaption">决策时可用的未来7日预报累计雨量 · P_cumu7 (mm)</p>
+            <div class="chart-box chart-box-aux"><canvas id="waterRainChart"></canvas></div>
+          </div>
+
+          <div class="review-table-wrap">
+            <table class="review-table">
+              <thead>
+                <tr>
+                  <th>日期</th><th>年</th><th>生育期</th>
+                  <th>h</th><th title="决策日可用的未来7日累计降雨预报 P_cumu7 (mm)">7日预报雨量</th><th>hmin</th><th>hmax</th><th>Hp</th><th>Hc</th>
+                  <th title="策略网络原始动作（Hc/限幅之前）">模型提案</th>
+                  <th title="环境实际灌/排 mm（守卫后）· 与经验规则比对">模型执行</th>
+                  <th title="当前状态下的合法规则请求；下行为原规则轨迹同日对照">规则当前/原轨迹</th>
+                  <th title="默认 — 未填；选了档位=专家指定(已填)。未填日递推用模型，不算改动">专家</th>
+                  <th title="结构化改因：合并小额 / 预报暂缓灌水 / 允许较低水层 / 其他（等雨与偏干须分开标注）">改因</th>
+                  <th>标记</th>
+                </tr>
+              </thead>
+              <tbody id="reviewTbody"><tr><td colspan="15" class="empty">请先生成或加载人工审阅表</td></tr></tbody>
+            </table>
+          </div>
+
+          <div class="card-foot review-actions">
+            <button type="button" class="btn" id="btnAcceptPendingYear" title="把本审阅年全部「需重看」日接纳为当前 PPO 建议（显式批量认可）">一键认可本审阅年需重看</button>
+            <button type="button" class="btn primary" id="btnFinalizeYear">本审阅年定稿（纳入 BC）</button>
+            <button type="button" class="btn ghost" id="btnResetYear" title="用 original_trajectories 覆盖当前审阅年，丢弃本学年已改动作">重置本审阅年为原始</button>
+            <button type="button" class="btn ghost section-hidden" id="btnResync">手动重算</button>
+            <span class="gate-hint" id="resyncStatus">改动作后下游会标「需重看」→ 先一键/逐日认可 → 再定稿（定稿才把未改日批量确认）。</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ⑤ 行为克隆：审阅闭环之后 -->
+    <section class="card section-wide section-hidden" id="card-bc">
+      <h2><span class="num">⑤</span> 行为克隆(BC)</h2>
+      <p class="hint">
+        须先完成人工审阅门禁后提交。机制：在<strong>原 PPO 权重</strong>上只训 policy head（价值头冻结），
+        损失 = 加权交叉熵（专家动作）+ <code>kl_beta</code>×KL（相对旧策略）——用 KL 保住 PPO 经验，用 CE/`w_edit` 拉向专家习惯。
+      </p>
+      <p class="lead" id="bcRationale">{{ session.bc_rationale }}</p>
+      <div class="bc-toolbar">
+        <div class="bc-params">
+          <label class="param-chip">
+            <span class="param-label">epochs <small>主结果 80</small></span>
+            <input type="number" id="bcEpochs" value="{{ session.bc_epochs }}" min="1" max="200" />
+          </label>
+          <label class="param-chip">
+            <span class="param-label">改动权重 w_edit <small>主结果 6</small></span>
+            <input type="number" id="bcWEdit" value="{{ session.bc_w_edit_default }}" min="0.1" step="0.5" />
+          </label>
+          <p class="hint bc-param-hint">平衡配置：epochs=80、w_edit=6（改动日×6，未改确认日=1）；早停 patience≈6。留出年只做最终评价，不用于挑参。</p>
+        </div>
+        <div class="bc-submit">
+          <button type="button" class="btn primary btn-block" id="btnBc" title="成功后自动跑三方对比">提交并行为克隆微调</button>
+          <p class="gate-hint" id="bcGateHint"></p>
+          <p class="hint" style="margin:0">成功后会自动跑⑥三方对比；也可稍后手动重跑。</p>
+        </div>
+      </div>
+      <div id="bcResultPanel" class="bc-result-panel section-hidden" aria-live="polite"></div>
+    </section>
+
+    <section class="card section-wide section-hidden" id="card-eval">
+      <div class="card-head-row">
+        <div>
+          <h2><span class="num">⑥</span> 三方对比 · 基线(规则) / 原 PPO / 行为克隆后 HITL</h2>
+          <p class="hint" style="margin-bottom:0">
+            须先完成行为克隆。Δ% 相对<strong>固定规则基线</strong>。
+            <strong>全部 8 个评估年</strong>均参与对比（含审阅年）。
+            表下：全年份配对图、生育期×年份热图、单年过程图（默认2016）、吸收概率图。
+            灌/排按<strong>日数</strong>计；另列连续操作段与小额段（零值也显示）。
+          </p>
+        </div>
+        <div class="compare-toolbar">
+          <label class="compare-view">
+            <span>对比视图</span>
+            <select id="compareYearFilter">
+              <option value="">多年均值（默认）</option>
+            </select>
+          </label>
+          <button type="button" class="btn primary" id="btnCompare">跑三方对比</button>
+        </div>
+      </div>
+      <div id="compareBox" class="compare-box">
+        <p class="hint">三方对比完成后显示指标表与诊断图。</p>
+      </div>
+      <p class="dl-row">
+        <a href="/download/review.csv">review.csv</a> ·
+        <a href="/download/ppo_hitl.pth">ppo_hitl.pth</a> ·
+        <a href="/download/task_compare.json">task_compare.json</a> ·
+        <a href="/download/three_way.json">three_way.json</a> ·
+        <a href="/download/absorption.json">absorption.json</a> ·
+        <a href="/api/session/download_zip">打包下载微调会话 zip</a>
+      </p>
+    </section>
+  </div>
+
+  <footer>
+    请从 <code>PPO_Rice_Env</code> 启动：<code>STEP=web</code> 或 <code>python run.py hitl board</code>
+    · 训练会话 <code>output/runs/</code> · 微调会话 <code>output/hitl_sessions/</code>
+  </footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="/static/board.js?v={{ asset_v }}"></script>
+</body>
+</html>

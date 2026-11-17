@@ -1,0 +1,27 @@
+{
+  "session": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\hitl_sessions\\sess_20261028_163359",
+  "original_model": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\hitl_sessions\\sess_20261028_163359\\01_train\\ppo_rice_best.pth",
+  "hitl_model": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\hitl_sessions\\sess_20261028_163359\\05_bc\\ppo_hitl.pth",
+  "metrics": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\hitl_sessions\\sess_20261028_163359\\07_metrics\\task_compare.json",
+  "year_policy": {
+    "two_way_note": "一期二方对比始终用评估集全部年份",
+    "three_way_scope": "全部评估年",
+    "holdout_years": [
+      "2017",
+      "2018",
+      "2019",
+      "2020"
+    ],
+    "review_years": [
+      "2012",
+      "2013",
+      "2014",
+      "2016"
+    ]
+  },
+  "dirs": {
+    "rule": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\hitl_sessions\\sess_20261028_163359\\06_compare\\rule",
+    "original_ppo": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\hitl_sessions\\sess_20261028_163359\\06_compare\\original_ppo",
+    "hitl_ppo": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\hitl_sessions\\sess_20261028_163359\\06_compare\\hitl_ppo"
+  }
+}

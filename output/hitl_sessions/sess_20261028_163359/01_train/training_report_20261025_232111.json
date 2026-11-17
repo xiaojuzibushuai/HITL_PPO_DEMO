@@ -1,0 +1,76 @@
+{
+    "timestamp": "2026-10-25T23:21:11.358752",
+    "training_summary": {
+        "total_episodes": 1500,
+        "total_time_hours": 0.92,
+        "final_mean_return": 77.9772,
+        "final_mean_actions": 23.86
+    },
+    "return_statistics": {
+        "min": -28.288164078224614,
+        "max": 94.2543652066372,
+        "mean": 58.89598733439712,
+        "std": 32.689975556521794,
+        "final_100_mean": 77.97719212985344
+    },
+    "action_statistics": {
+        "min": 13.0,
+        "max": 99.0,
+        "mean": 37.234,
+        "std": 23.22961997106281,
+        "final_100_mean": 23.86
+    },
+    "convergence_analysis": {
+        "return_improvement": 76.62895833150569,
+        "action_improvement": 53.95,
+        "return_stability": 0.9059863874208176,
+        "convergence_status": "已收敛"
+    },
+    "hyperparameters": {
+        "n_states": 8,
+        "n_actions": 21,
+        "action_space": [
+            -100,
+            -90,
+            -80,
+            -70,
+            -60,
+            -50,
+            -40,
+            -30,
+            -20,
+            -10,
+            0,
+            10,
+            20,
+            30,
+            40,
+            50,
+            60,
+            70,
+            80,
+            90,
+            100
+        ],
+        "policy_mode": "masked",
+        "learning_rate": 0.0002,
+        "gamma": 0.98,
+        "clip_param": 0.15,
+        "value_loss_coef": 0.7,
+        "entropy_coef": 0.03,
+        "batch_size": 1024,
+        "ppo_epochs": 15,
+        "lam": 0.9,
+        "hidden_dim": 512,
+        "training_episodes": 1500,
+        "training_time": 3303.2757148742676,
+        "final_mean_return": 77.97719212985344,
+        "final_mean_actions": 23.86,
+        "best_mean_return": 78.87992127147082,
+        "best_episode": 582,
+        "best_window": 100,
+        "checkpoint_role": "best",
+        "note": "全局最佳：近100轮均值=78.8799（刷新于 ep 582）",
+        "use_action_mask": true
+    }
+}

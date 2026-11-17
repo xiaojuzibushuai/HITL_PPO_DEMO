@@ -1,0 +1,80 @@
+{"date": "2012-06-23 00:00:00", "a_expert": 40.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-06-22 00:00:00", "a_expert": 40.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-06-28 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-06-29 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-06-30 00:00:00", "a_expert": 20.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-07-06 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-07-07 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-07-08 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-07-09 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-07-12 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-07-28 00:00:00", "a_expert": 30.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-07-24 00:00:00", "a_expert": 40.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-07-27 00:00:00", "a_expert": 30.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-07-30 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-07-15 00:00:00", "a_expert": -20.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-08-10 00:00:00", "a_expert": -70.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-08-11 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-08-10 00:00:00", "a_expert": -80.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-08-11 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-08-12 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-08-13 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-08-14 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-08-15 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-08-16 00:00:00", "a_expert": -30.0, "reason": "", "action": "modify_expert"}
+{"date": "", "a_expert": null, "reason": "accept_pending_year:2012:n=65", "action": "accept_pending_year", "n_accepted": 65}
+{"action": "finalize", "years": ["2012"], "source": "human_whole_season_acceptance", "fingerprints": {"2012": "fbe5fc4b8ddafab6"}}
+{"date": "", "a_expert": null, "reason": "finalize_year:2012", "action": "finalize_year", "trajectory_fingerprint": "fbe5fc4b8ddafab6"}
+{"date": "2012-09-09 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-09-10 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2012-09-11 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "", "a_expert": null, "reason": "accept_pending_year:2012:n=5", "action": "accept_pending_year", "n_accepted": 5}
+{"action": "finalize", "years": ["2012"], "source": "human_whole_season_acceptance", "fingerprints": {"2012": "05034ab640013e10"}}
+{"date": "", "a_expert": null, "reason": "finalize_year:2012", "action": "finalize_year", "trajectory_fingerprint": "05034ab640013e10"}
+{"date": "2013-07-06 00:00:00", "a_expert": -20.0, "reason": "", "action": "modify_expert"}
+{"date": "2013-07-08 00:00:00", "a_expert": -40.0, "reason": "", "action": "modify_expert"}
+{"date": "2013-07-09 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2013-07-10 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "", "a_expert": null, "reason": "accept_pending_year:2013:n=64", "action": "accept_pending_year", "n_accepted": 64}
+{"action": "finalize", "years": ["2013"], "source": "human_whole_season_acceptance", "fingerprints": {"2012": "05034ab640013e10", "2013": "b3d80ef29d0d07ed"}}
+{"date": "", "a_expert": null, "reason": "finalize_year:2013", "action": "finalize_year", "trajectory_fingerprint": "b3d80ef29d0d07ed"}
+{"date": "2014-07-17 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-08 00:00:00", "a_expert": -60.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-09 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-10 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-11 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-12 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-14 00:00:00", "a_expert": -70.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-15 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-16 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-09-03 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-07-28 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-08 00:00:00", "a_expert": -40.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-08 00:00:00", "a_expert": -60.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-09 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-10 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-11 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-12 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-14 00:00:00", "a_expert": -70.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-15 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-08-16 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-09-03 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2014-09-04 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "", "a_expert": null, "reason": "accept_pending_year:2014:n=45", "action": "accept_pending_year", "n_accepted": 45}
+{"action": "finalize", "years": ["2014"], "source": "human_whole_season_acceptance", "fingerprints": {"2012": "05034ab640013e10", "2013": "b3d80ef29d0d07ed", "2014": "141d56d9d9f69e6b"}}
+{"date": "", "a_expert": null, "reason": "finalize_year:2014", "action": "finalize_year", "trajectory_fingerprint": "141d56d9d9f69e6b"}
+{"date": "2016-07-02 00:00:00", "a_expert": -30.0, "reason": "", "action": "modify_expert"}
+{"date": "2016-07-06 00:00:00", "a_expert": -40.0, "reason": "", "action": "modify_expert"}
+{"date": "2016-07-06 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2016-07-08 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2016-07-09 00:00:00", "a_expert": 0.0, "reason": "", "action": "modify_expert"}
+{"date": "2016-09-08 00:00:00", "a_expert": 30.0, "reason": "", "action": "modify_expert"}
+{"date": "2016-09-13 00:00:00", "a_expert": 30.0, "reason": "", "action": "modify_expert"}
+{"date": "2016-09-12 00:00:00", "a_expert": 30.0, "reason": "", "action": "modify_expert"}
+{"date": "2016-09-12 00:00:00", "a_expert": 20.0, "reason": "", "action": "modify_expert"}
+{"date": "", "a_expert": null, "reason": "accept_pending_year:2016:n=66", "action": "accept_pending_year", "n_accepted": 66}
+{"action": "finalize", "years": ["2016"], "source": "human_whole_season_acceptance", "fingerprints": {"2012": "05034ab640013e10", "2013": "b3d80ef29d0d07ed", "2014": "141d56d9d9f69e6b", "2016": "299f4e924b4b450b"}}
+{"date": "", "a_expert": null, "reason": "finalize_year:2016", "action": "finalize_year", "trajectory_fingerprint": "299f4e924b4b450b"}
+{"date": "", "a_expert": null, "reason": "accept_pending_year:2016:n=0", "action": "accept_pending_year", "n_accepted": 0}
+{"action": "finalize", "years": ["2016"], "source": "human_whole_season_acceptance", "fingerprints": {"2012": "05034ab640013e10", "2013": "b3d80ef29d0d07ed", "2014": "141d56d9d9f69e6b", "2016": "299f4e924b4b450b"}}
+{"date": "", "a_expert": null, "reason": "finalize_year:2016", "action": "finalize_year", "trajectory_fingerprint": "299f4e924b4b450b"}

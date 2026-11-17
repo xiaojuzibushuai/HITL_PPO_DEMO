@@ -1,0 +1,33 @@
+{
+  "episode": 1500,
+  "total_episodes": 1500,
+  "return": 83.95747620840392,
+  "mean_return": 79.60846123811636,
+  "actions": 15,
+  "best_mean_return": 78.87992127147082,
+  "status": "done",
+  "updated_at": "2026-10-25T23:21:22",
+  "run_id": "run_20261025_222536",
+  "error": null,
+  "train": {
+    "model_path": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\runs\\run_20261025_222536\\01_train\\ppo_rice_best.pth",
+    "skipped": null
+  },
+  "eval_keys": [
+    "out_dir",
+    "eval_tables",
+    "ppo_daily",
+    "ppo_yearly",
+    "policy_mode",
+    "n_years_run",
+    "rule_daily",
+    "rule_yearly",
+    "summary",
+    "compare_summary",
+    "daily_compare",
+    "disagree",
+    "manifest",
+    "run",
+    "run_id"
+  ]
+}

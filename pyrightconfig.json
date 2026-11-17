@@ -1,0 +1,15 @@
+{
+  "include": ["."],
+  "exclude": ["output", "**/__pycache__"],
+  "extraPaths": ["."],
+  "pythonVersion": "3.10",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": "none",
+  "reportMissingModuleSource": "none",
+  "executionEnvironments": [
+    {
+      "root": ".",
+      "extraPaths": ["."]
+    }
+  ]
+}

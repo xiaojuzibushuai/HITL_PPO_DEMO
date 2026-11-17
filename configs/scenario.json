@@ -1,0 +1,30 @@
+{
+  "name": "默认情景（与 data/forecast·actual 年序列对齐）",
+  "crop": {
+    "variety": "高邮水稻",
+    "comment": "生育期起止须与 forecast.csv 中每年序列一致；也可与 growth_para.csv 首尾阶段对齐"
+  },
+  "calendar": {
+    "start": "06/15",
+    "terminal": "10/04",
+    "duration_days": null,
+    "comment": "与当前 data 一致：每年 6/15～10/4；duration_days=null 则含首尾自动算"
+  },
+  "soil": {
+    "RAW": 16.0,
+    "TAW": 80.0,
+    "comment": "易耗水量 RAW、总有效水 TAW（mm），随土壤类型/根区变化，应按试验或当地参数改"
+  },
+  "hydrology": {
+    "default_perc_mm_d": 1.5,
+    "comment": "逐日 p 列缺失时的默认渗漏；有 forecast.p 时优先用表"
+  },
+  "data": {
+    "forecast": "data/forecast.csv",
+    "actual": "data/actual.csv",
+    "growth_para": "data/growth_para.csv",
+    "forecast_eval": "data/forecast_policy.csv",
+    "actual_eval": "data/actual_policy.csv",
+    "comment": "训练用 forecast/actual；评估固定用 forecast_eval/actual_eval（默认 *_policy）"
+  }
+}

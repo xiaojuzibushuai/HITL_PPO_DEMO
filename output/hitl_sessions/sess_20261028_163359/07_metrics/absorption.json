@@ -1,0 +1,55 @@
+{
+  "ok": true,
+  "updated_at": "2026-10-28T19:40:30",
+  "n_days": 448,
+  "n_confirmed": 356,
+  "n_edited_among_confirmed": 42,
+  "n_keep_among_confirmed": 314,
+  "confirm_keep_rate": 0.8820224719101124,
+  "edit_share_among_confirmed": 0.11797752808988764,
+  "n_edit_vs_original_traj": 77,
+  "edit_reproduce_rate": 0.6666666666666666,
+  "confirm_hold_rate_policy": 0.9875,
+  "n_eval_edit": 42,
+  "n_eval_keep": 240,
+  "n_match_edit": 28,
+  "n_match_keep": 237,
+  "n_forced_mask_only": 74,
+  "forced_mask_match_rate": 1.0,
+  "by_year": {
+    "2012": {
+      "edit_reproduce_rate": 0.65,
+      "confirm_hold_rate_policy": 1.0,
+      "n_edited": 20,
+      "n_keep": 48
+    },
+    "2013": {
+      "edit_reproduce_rate": 0.5,
+      "confirm_hold_rate_policy": 0.974025974025974,
+      "n_edited": 4,
+      "n_keep": 77
+    },
+    "2014": {
+      "edit_reproduce_rate": 0.8333333333333334,
+      "confirm_hold_rate_policy": 0.9811320754716981,
+      "n_edited": 12,
+      "n_keep": 53
+    },
+    "2016": {
+      "edit_reproduce_rate": 0.5,
+      "confirm_hold_rate_policy": 1.0,
+      "n_edited": 6,
+      "n_keep": 62
+    }
+  },
+  "hitl_model": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\hitl_sessions\\sess_20261028_163359\\05_bc\\ppo_hitl.pth",
+  "source": "labels.json",
+  "note": null,
+  "defs": {
+    "edit_reproduce_rate": "改动日且掩码可选档>1：掩码后 argmax == 专家请求标签（强制单档日另计）",
+    "confirm_hold_rate_policy": "未改日且掩码可选档>1：掩码后 argmax == 标签（强制单档日另计）",
+    "n_forced_mask_only": "掩码仅剩一档的确认日数（匹配不计入主吸收率）",
+    "include_in_bc": "定稿可编辑日进 BC；晒田/落干默认不进；改动日权重 w_edit，其余权重 1",
+    "by_year": "按审阅年拆分的吸收率；留出验证年无专家改动时改动复现为 null"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "out_dir": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\hitl_sessions\\sess_20261028_163359\\06_compare\\original_ppo",
+  "eval_tables": {
+    "forecast": "data/forecast_policy.csv",
+    "actual": "data/actual_policy.csv"
+  },
+  "only": "ppo",
+  "max_years": null,
+  "n_years_run": 8,
+  "artifacts": {
+    "ppo_daily": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\hitl_sessions\\sess_20261028_163359\\06_compare\\original_ppo\\policy_output_PPO.csv",
+    "ppo_yearly": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\hitl_sessions\\sess_20261028_163359\\06_compare\\original_ppo\\yearly_metrics_PPO.csv",
+    "policy_mode": "masked"
+  }
+}

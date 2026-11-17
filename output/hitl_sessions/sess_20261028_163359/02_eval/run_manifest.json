@@ -1,0 +1,25 @@
+{
+  "out_dir": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\runs\\run_20261025_222536\\02_eval",
+  "eval_tables": {
+    "forecast": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\runs\\run_20261025_222536\\uploads\\forecast_eval.csv",
+    "actual": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\runs\\run_20261025_222536\\uploads\\actual_eval.csv"
+  },
+  "only": "both",
+  "max_years": null,
+  "n_years_run": 8,
+  "artifacts": {
+    "ppo_daily": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\runs\\run_20261025_222536\\02_eval\\policy_output_PPO.csv",
+    "ppo_yearly": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\runs\\run_20261025_222536\\02_eval\\yearly_metrics_PPO.csv",
+    "rule_daily": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\runs\\run_20261025_222536\\02_eval\\policy_output_RULE.csv",
+    "rule_yearly": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\runs\\run_20261025_222536\\02_eval\\yearly_metrics_RULE.csv",
+    "compare_summary": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\runs\\run_20261025_222536\\02_eval\\compare_summary.json",
+    "daily_compare": "D:\\Desktop\\人在回路修正的强化学习模型\\PPO_Rice_Env\\output\\runs\\run_20261025_222536\\02_eval\\policy_compare_daily.csv",
+    "policy_mode": "masked",
+    "disagree": {
+      "n_days": 896,
+      "n_disagree": 182,
+      "disagree_rate": 0.203125,
+      "mean_abs_diff_mm": 4.479624727449202
+    }
+  }
+}
